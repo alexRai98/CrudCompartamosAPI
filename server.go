@@ -1,13 +1,33 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"crud-compartamos-api/controller"
+	"crud-compartamos-api/service"
+	"crud-compartamos-api/validator"
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	clientService    = service.New()
+	validate         = validator.NewValidator()
+	clientController = controller.New(clientService, validate)
+)
 
 func main() {
+	connectMongoDb()
 	server := gin.Default()
-	server.GET("/hello", func(context *gin.Context) {
-		context.JSON(200, gin.H{
-			"message": "hello world",
-		})
+	server.GET("/clients", func(context *gin.Context) {
+		context.JSON(200, clientController.FinAllClients())
+	})
+	server.POST("/client", func(context *gin.Context) {
+		clients, err := clientController.SaveClient(context)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		context.JSON(201, clients)
 	})
 	server.Run(":8080")
 }
