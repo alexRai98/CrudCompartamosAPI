@@ -21,26 +21,26 @@ func main() {
 		context.JSON(200, "Hello ..!!")
 	})
 	server.GET("/clients", func(context *gin.Context) {
-		response, err := clientController.FindAllClients()
+		clients, err := clientController.FindAllClients()
 		if err != nil {
 			context.JSON(400, gin.H{
 				"message": err.Error(),
 			})
 			return
 		}
-		context.JSON(200, gin.H{
-			"ok": response,
-		})
+		context.JSON(200, clients)
 	})
 	server.POST("/client", func(context *gin.Context) {
-		clients, err := clientController.SaveClient(context)
+		response, err := clientController.SaveClient(context)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"message": err.Error(),
 			})
 			return
 		}
-		context.JSON(201, clients)
+		context.JSON(201, gin.H{
+			"ok": response,
+		})
 	})
 	server.PUT("/client", func(context *gin.Context) {
 		response, err := clientController.UpdateClient(context)
