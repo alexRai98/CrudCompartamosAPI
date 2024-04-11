@@ -4,7 +4,6 @@ import (
 	"crud-compartamos-api/types"
 	v "github.com/go-ozzo/ozzo-validation/v4"
 	"regexp"
-	"time"
 )
 
 type IValidator interface {
@@ -29,7 +28,7 @@ func (c *Validator) Rules(request *types.Client) []*v.FieldRules {
 	rules = append(rules, []*v.FieldRules{
 		v.Field(&request.DNI, v.Required, v.Match(regexDNI)),
 		v.Field(&request.City, v.Required),
-		v.Field(&request.Birthdate, v.Required, v.Date(time.DateOnly).Max(time.Now())),
+		v.Field(&request.Birthdate, v.Required),
 		v.Field(&request.Gender, v.Required, v.In(gender...)),
 		v.Field(&request.LastName, v.Required, v.Match(regexName)),
 		v.Field(&request.Name, v.Required, v.Match(regexName)),

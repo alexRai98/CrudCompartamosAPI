@@ -12,8 +12,8 @@ import (
 type IServiceClient interface {
 	SaveClient(client types.Client) (bool, error)
 	FinAllClients() ([]types.Client, error)
-	UpdateClient(client types.Client) (bool, error)
-	DeleteClient(client types.Client) (bool, error)
+	UpdateClient(client types.Client) ([]types.Client, error)
+	DeleteClient(client types.Client) ([]types.Client, error)
 }
 
 type ClientService struct {
@@ -65,35 +65,34 @@ func (s *ClientService) FinAllClients() ([]types.Client, error) {
 	return clients, nil
 }
 
-func (s *ClientService) UpdateClient(clientUpdate types.Client) (bool, error) {
+func (s *ClientService) UpdateClient(clientUpdate types.Client) ([]types.Client, error) {
 	collection, err := s.getCollection()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	filter := bson.D{{"dni", clientUpdate.DNI}}
 	update := bson.D{{"$set", clientUpdate}}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	fmt.Printf("Documents matched: %v\n", result.MatchedCount)
-	fmt.Printf("Documents updated: %v\n", result.ModifiedCount)
-	return true, nil
+	return s.FinAllClients()
 }
 
-func (s *ClientService) DeleteClient(client types.Client) (bool, error) {
+func (s *ClientService) DeleteClient(client types.Client) ([]types.Client, error) {
 	collection, err := s.getCollection()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	filter := bson.D{{"dni", client.DNI}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	fmt.Printf("Document delete: %v\n", result)
-	return true, nil
+	return s.FinAllClients()
 }
 
 func (s *ClientService) getCollection() (*mongo.Collection, error) {

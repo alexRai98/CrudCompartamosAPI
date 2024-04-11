@@ -10,8 +10,8 @@ import (
 type IClientController interface {
 	SaveClient(ctx *gin.Context) (bool, error)
 	FindAllClients() ([]types.Client, error)
-	UpdateClient(ctx *gin.Context) (bool, error)
-	DeleteClient(ctx *gin.Context) (bool, error)
+	UpdateClient(ctx *gin.Context) ([]types.Client, error)
+	DeleteClient(ctx *gin.Context) ([]types.Client, error)
 }
 
 type Controller struct {
@@ -45,22 +45,22 @@ func (c Controller) FindAllClients() ([]types.Client, error) {
 	return c.service.FinAllClients()
 }
 
-func (c Controller) UpdateClient(ctx *gin.Context) (bool, error) {
+func (c Controller) UpdateClient(ctx *gin.Context) ([]types.Client, error) {
 	var client types.Client
 	if err := ctx.BindJSON(&client); err != nil {
-		return false, err
+		return nil, err
 	}
 
 	if err := c.validator.ValidateRequest(client); err != nil {
-		return false, err
+		return nil, err
 	}
 	return c.service.UpdateClient(client)
 }
 
-func (c Controller) DeleteClient(ctx *gin.Context) (bool, error) {
+func (c Controller) DeleteClient(ctx *gin.Context) ([]types.Client, error) {
 	var client types.Client
 	if err := ctx.BindJSON(&client); err != nil {
-		return false, err
+		return nil, err
 	}
 	return c.service.DeleteClient(client)
 }

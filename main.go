@@ -43,28 +43,24 @@ func main() {
 		})
 	})
 	server.PUT("/client", func(context *gin.Context) {
-		response, err := clientController.UpdateClient(context)
+		clients, err := clientController.UpdateClient(context)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"message": err.Error(),
 			})
 			return
 		}
-		context.JSON(204, gin.H{
-			"ok": response,
-		})
+		context.JSON(200, clients)
 	})
 	server.DELETE("/client", func(context *gin.Context) {
-		response, err := clientController.DeleteClient(context)
+		clients, err := clientController.DeleteClient(context)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"message": err.Error(),
 			})
 			return
 		}
-		context.JSON(205, gin.H{
-			"ok": response,
-		})
+		context.JSON(200, clients)
 	})
 	server.Run()
 }
